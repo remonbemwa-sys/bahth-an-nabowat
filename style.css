@@ -1,0 +1,605 @@
+/* --- CSS Reset & Variables --- */
+:root {
+    --primary-color: #ff9f43;
+    --primary-hover: #ffb167;
+    --secondary-color: #0abde3;
+    --accent-color: #ff6b6b;
+    --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #fff9db 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(255, 255, 255, 0.4);
+    --text-color: #2c3e50;
+    --text-light: #57606f;
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --shadow-glow: 0 0 20px rgba(255, 159, 67, 0.4);
+    --font-main: 'Cairo', 'Almarai', system-ui, -apple-system, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* --- Animated Bubble Background --- */
+.bubble-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bubble-bg::after, .bubble-bg::before {
+    content: '';
+    position: absolute;
+    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+    animation: float-bubbles 12s infinite ease-in-out;
+}
+
+.bubble-bg::before {
+    width: 300px;
+    height: 300px;
+    left: -10%;
+    top: 20%;
+}
+
+.bubble-bg::after {
+    width: 400px;
+    height: 400px;
+    right: -10%;
+    top: 50%;
+    animation-delay: -6s;
+}
+
+@keyframes float-bubbles {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-50px) scale(1.1); }
+}
+
+/* --- Header Styling --- */
+.app-header {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--card-border);
+    padding: 2.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.header-content {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.main-title {
+    font-size: 2.3rem;
+    font-weight: 900;
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #2c3e50, #ff9f43);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.4;
+}
+
+.subtitle {
+    font-size: 1.15rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    font-weight: 600;
+}
+
+/* --- Main Layout --- */
+.app-main {
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+/* --- Interactive Image Section --- */
+.interactive-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 6px solid #ffffff;
+    background-color: #2c3e50;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.image-wrapper:hover {
+    transform: translateY(-5px);
+}
+
+.prophets-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Hotspot Areas styling */
+.hotspot-area {
+    position: absolute;
+    background: transparent;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    z-index: 10;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.hotspot-area:hover, .hotspot-area.active {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), inset 0 0 15px rgba(255, 223, 120, 0.4);
+}
+
+/* Tooltip text styling */
+.tooltip-text {
+    visibility: hidden;
+    width: 150px;
+    background-color: rgba(44, 62, 80, 0.95);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 6px 4px;
+    position: absolute;
+    z-index: 20;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    font-size: 0.85rem;
+    font-weight: 700;
+    pointer-events: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(44, 62, 80, 0.95) transparent transparent transparent;
+}
+
+.hotspot-area:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-2px);
+}
+
+/* --- Display Section & Character Cards --- */
+.display-section {
+    min-height: 450px;
+    display: flex;
+}
+
+/* Empty State Styling */
+.empty-state-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 2px solid var(--card-border);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--shadow-soft);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.empty-state-card h2 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.empty-state-card p {
+    color: var(--text-light);
+    line-height: 1.8;
+    max-width: 320px;
+    font-size: 1rem;
+}
+
+/* Active Character Card */
+.character-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 2px solid var(--card-border);
+    border-radius: 24px;
+    padding: 2rem;
+    width: 100%;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1);
+}
+
+.character-card.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    border-bottom: 2px dashed rgba(44, 62, 80, 0.1);
+    padding-bottom: 1.2rem;
+}
+
+.char-avatar {
+    font-size: 2.5rem;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(255, 159, 67, 0.2);
+    border: 3px solid #ffffff;
+}
+
+.char-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.char-name {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-color);
+}
+
+.char-role {
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+/* Prophecy Box */
+.prophecy-box {
+    background: linear-gradient(135deg, #fffaf0 0%, #fff5e6 100%);
+    border: 2px solid #ffe8cc;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.box-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #e67e22;
+    margin-bottom: 0.8rem;
+}
+
+.bible-ref {
+    margin-right: auto;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(230, 126, 34, 0.15);
+}
+
+.prophecy-text {
+    font-size: 1.25rem;
+    line-height: 2;
+    color: #2c3e50;
+    font-weight: 700;
+    text-align: justify;
+}
+
+/* Explanation Box */
+.explanation-box {
+    background: linear-gradient(135deg, #f0faff 0%, #e0f7fa 100%);
+    border: 2px solid #b2ebf2;
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+}
+
+.explanation-box .box-title {
+    color: #0097a7;
+    margin-bottom: 0.8rem;
+}
+
+.explanation-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #34495e;
+    font-weight: 600;
+    text-align: justify;
+}
+
+/* Audio Control Bar */
+.audio-control-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+}
+
+.audio-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #ff8a12 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 4px 15px rgba(255, 159, 67, 0.3);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.audio-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 159, 67, 0.4);
+}
+
+.audio-btn:active {
+    transform: translateY(0);
+}
+
+.audio-btn svg {
+    flex-shrink: 0;
+}
+
+.play-icon, .pause-icon {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Audio Visualizer Wave */
+.audio-visualizer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+    width: 60px;
+}
+
+.audio-visualizer .bar {
+    display: block;
+    width: 4px;
+    height: 6px;
+    background: var(--secondary-color);
+    border-radius: 2px;
+    transition: height 0.3s ease;
+}
+
+/* Animation classes applied by JS */
+.audio-visualizer.playing .bar {
+    animation: soundWave 1.2s infinite ease-in-out;
+}
+
+.audio-visualizer.playing .bar:nth-child(1) { animation-delay: 0.1s; }
+.audio-visualizer.playing .bar:nth-child(2) { animation-delay: 0.4s; }
+.audio-visualizer.playing .bar:nth-child(3) { animation-delay: 0.2s; }
+.audio-visualizer.playing .bar:nth-child(4) { animation-delay: 0.6s; }
+.audio-visualizer.playing .bar:nth-child(5) { animation-delay: 0.3s; }
+.audio-visualizer.playing .bar:nth-child(6) { animation-delay: 0.5s; }
+
+@keyframes soundWave {
+    0%, 100% { height: 6px; }
+    50% { height: 26px; }
+}
+
+/* Prophecies Navigation */
+.prophecies-nav {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 20px;
+    padding: 4px 8px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.nav-arrow-btn {
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.nav-arrow-btn:hover {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+}
+
+.nav-indicator {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-color);
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Highlight style for spoken words */
+.speaking-highlight {
+    background-color: rgba(255, 223, 120, 0.4);
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+/* --- Footer --- */
+.app-footer {
+    background: rgba(44, 62, 80, 0.04);
+    border-top: 1px solid rgba(44, 62, 80, 0.05);
+    padding: 2rem 1rem;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.app-footer p {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.app-footer .footer-note {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #95a5a6;
+}
+
+/* --- Responsive Media Queries --- */
+@media (max-width: 992px) {
+    .app-main {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .image-wrapper {
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .app-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .main-title {
+        font-size: 1.6rem;
+    }
+    
+    .subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .app-main {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+    
+    .hotspot-dot {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .character-card {
+        padding: 1.2rem;
+    }
+    
+    .char-name {
+        font-size: 1.3rem;
+    }
+    
+    .prophecy-text {
+        font-size: 1.1rem;
+        line-height: 1.8;
+    }
+    
+    .explanation-text {
+        font-size: 0.95rem;
+    }
+    
+    .audio-control-bar {
+        gap: 0.8rem;
+    }
+    
+    .audio-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .prophecies-nav {
+        width: 100%;
+        justify-content: space-between;
+        margin-right: 0;
+    }
+}
